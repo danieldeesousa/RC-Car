@@ -16,22 +16,28 @@ void loop()
 {
    if(Serial.available() > 0){
     input = Serial.read();
-    motorStop(); // reset direction
     switch (input){
       case 'F':
+        motorStop(); // reset direction
         forward();
         break;
       case 'R':
+        motorStop(); // reset direction
         right();
         break;
       case 'L':
+        motorStop(); // reset direction
         left();
         break;
       case 'B':
+        motorStop(); // reset direction
         backwards();
         break;
       case 'S':
         motorStop();
+        break;
+      case 'H':
+        honk();
         break;
     }
   }
@@ -81,11 +87,16 @@ void motorStop()
   PORTD &= ~right_m; 
 }
 
+void honk()
+{
+   tone(8, 460, 100);
+}
+
 void leftMotor(int positive, int negative, int motorspeed)
 {
   digitalWrite(11, positive);
   digitalWrite(10, negative);
-  analogWrite(9, motorspeed);
+  analogWrite(9, motorspeed-5);
 }
 
 void rightMotor(int positive, int negative, int motorspeed)
