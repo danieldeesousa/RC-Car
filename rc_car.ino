@@ -1,3 +1,6 @@
+#define left_led 13
+#define right_led 7
+
 int left_m = 14; // Digital pins controlling motor 1 - 0b00001110
 int right_m = 104; // Digital pins controlling motor 2 - 0b01101000
 int motorSpeed = 255;
@@ -8,14 +11,15 @@ void setup()
 {
   Serial.begin(9600); //set baud rate
   DDRB |= left_m; // setup pins attatched to motor 1 as OUTPUT - LEFT
-  DDRD |= right_m; // setup pins attatched to motor 2 as OUTPUT
-  pinMode(6, OUTPUT);pinMode(5, OUTPUT);pinMode(3, OUTPUT);
+  DDRD |= right_m; // setup pins attatched to motor 2 as OUTPUT - RIGHT
+  pinMode(left_led, OUTPUT); pinMode(right_led, OUTPUT); // enable leds as OUTPUT
 }
 
 void loop()
 {
+   // interrupt processor to check if data is available from Bluetooth module
    if(Serial.available() > 0){
-    input = Serial.read();
+    input = Serial.read(); // interrupt processor to read available data
     switch (input){
       case 'F':
         motorStop(); // reset direction
@@ -50,6 +54,8 @@ void forward()
   leftMotor(HIGH, LOW, motorSpeed);
 
   rightMotor(HIGH, LOW, motorSpeed);
+
+  ledWrite(HIGH, HIGH);
 }
 
 void right()
@@ -59,6 +65,8 @@ void right()
   leftMotor(HIGH, LOW, motorSpeed);
 
   rightMotor(LOW, LOW, 0);
+
+  ledWrite(HIGH, LOW);
 }
 
 void left()
@@ -68,6 +76,8 @@ void left()
   leftMotor(LOW, LOW, 0);
   
   rightMotor(HIGH, LOW, motorSpeed);
+
+  ledWrite(LOW, HIGH);
 }
 
 void backwards()
@@ -77,6 +87,8 @@ void backwards()
   leftMotor(LOW, HIGH, motorSpeed);
 
   rightMotor(LOW, HIGH, motorSpeed);
+
+  ledWrite(LOW, LOW);
 }
 
 void motorStop()
@@ -85,6 +97,8 @@ void motorStop()
   // turn off outputs
   PORTB &= ~left_m; 
   PORTD &= ~right_m; 
+
+  //ledWrite(LOW, LOW);
 }
 
 void honk()
@@ -106,3 +120,8 @@ void rightMotor(int positive, int negative, int motorspeed)
   analogWrite(3, motorspeed);
 }
 
+void ledWrite(int left, int right)
+{
+ digitalWrite(left_led, left); 
+ digitalWrite(right_led, right); 
+}
